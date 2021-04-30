@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
  </head>
  <body>
+  <h2>Ping: <h1 id="ping">- -</h1></h2>
   <h2>Download Speed: <h1 id="download">- -</h1></h2>
   <h2>Upload Speed: <h1 id="upload">- -</h1></h2>
   <h3 id="statel">Status: <span id="status"></span></h3>
@@ -22,27 +23,35 @@
    let megabyte = null;
    const dlel = document.getElementById("download");
    const upel = document.getElementById("upload");
+   const ping = document.getElementById("ping");
    const status = document.getElementById("status");
    function download() {
    	   document.getElementById("retry").style.display = "none";
+   	   let ws = new WebSocket(location.origin.replace(/^http/, "ws"));
+   	   let int = null;
+   	   let startDate = Date.now();
+   	   ping.innerHTML = "- -"
    	   dlel.innerHTML = "- -"
    	   upel.innerHTML = "- -"
    	   status.innerHTML = "Waiting Response from Server....";
-	   let ws = new WebSocket(location.origin.replace(/^http/, "ws"));
-	   ws.addEventListener('message', ({ data }) => {
-	   	   if (!megabyte) megabyte = data;
-	   	   dl += data.length || data.byteLength || data.size;
-	   	   status.innerHTML = "Receiving Data....";
-	   });
-	   let int = setInterval(() => {
+	   ws.addEventListener('open', () => {
+	   	   status.innerHTML = "Server Responded";
+	   	   ping.innerHTML = Math.floor(Date.now() - startDate) + " ms";
+	   	ws.addEventListener('message', ({ data }) => {
+	   		   if (!megabyte) megabyte = data;
+	 	 	   dl += data.length || data.byteLength || data.size;
+	   	       status.innerHTML = "Receiving Data....";
+	    });
+	    int = setInterval(() => {
 	   	  dlel.innerHTML = bytes(dl, { bits: true });
 	   	  dl = 0;
-	   }, interval || 1000)
+	    }, interval || 1000);
+	   });
 	   ws.onclose = () => {
 	   	  status.innerHTML = "Download Test completed. Running upload test...."
 	   	  clearInterval(int);
 	   	  init();
-	   };
+	    };
 	   ws.onerror = () => {
 	      if (int) clearInterval(int);
 	      status.innerHTML = "An error occured. Try again later.";
