@@ -1,0 +1,32 @@
+{
+  "name": "speedtest",
+  "version": "1.0.0",
+  "description": "A simple speedtest server with frontend (Web) support",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yonle/speedtest.git"
+  },
+  "keywords": [
+    "speedtest",
+    "frontend",
+    "internet",
+    "network",
+    "speedmeter",
+    "speed"
+  ],
+  "author": "Yonle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yonle/speedtest/issues"
+  },
+  "homepage": "https://github.com/Yonle/speedtest#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^7.4.5"
+  }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Yonle speedtest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ </head>
+ <body>
+  <h2>Download Speed: <h1 id="download">- -</h1></h2>
+  <h2>Upload Speed: <h1 id="upload">- -</h1></h2>
+  <h3 id="statel">Status: <span id="status"></span></h3>
+  <button id="retry" style="display: none;"><h1>Retest</h1></button>
+  <p id="jswarn">This web requires Javascript with websocket support to work. Please enable it and try again later.<br><br><br>If you already enabled Javascript but it's still not running:<br>1. If you're the owner of this web, Check developer console & your code.<br>2. If you're visitor, Try contact to this website administrator</p>
+  <script src="pretty-bytes.js"></script>
+  <script>
+   if (typeof(WebSocket) == "function") document.getElementById("jswarn").style.display = "none";
+   if (typeof(bytes) != "function") {
+   	  location.reload();
+   }
+   let interval = 1000;
+   let dl = 0;
+   let up = 0;
+   let megabyte = null;
+   const dlel = document.getElementById("download");
+   const upel = document.getElementById("upload");
+   const status = document.getElementById("status");
+   function download() {
+   	   document.getElementById("retry").style.display = "none";
+   	   dlel.innerHTML = "- -"
+   	   upel.innerHTML = "- -"
+   	   status.innerHTML = "Waiting Response from Server....";
+	   let ws = new WebSocket(location.origin.replace(/^http/, "ws"));
+	   ws.addEventListener('message', ({ data }) => {
+	   	   if (!megabyte) megabyte = data;
+	   	   dl += data.length || data.byteLength || data.size;
+	   	   status.innerHTML = "Receiving Data....";
+	   });
+	   let int = setInterval(() => {
+	   	  dlel.innerHTML = bytes(dl, { bits: true });
+	   	  dl = 0;
+	   }, interval || 1000)
+	   ws.onclose = () => {
+	   	  status.innerHTML = "Download Test completed. Running upload test...."
+	   	  clearInterval(int);
+	   	  init();
+	   };
+	   ws.onerror = () => {
+	      if (int) clearInterval(int);
+	      status.innerHTML = "An error occured. Try again later.";
+	      document.getElementById("retry").style.display = "block";
+	      if (megabyte) delete megabyte;
+	   }
+   }
+   function init () {
+   	   if (!megabyte) {
+   	   	  return download();
+   	   }
+   	   let ws = new WebSocket(location.origin.replace(/^http/, "ws") + "/__upload");
+	   let int = null;
+	   ws.addEventListener('open', () => {
+	    status.innerHTML = "Uploading....";
+   	   	int = setInterval(async () => {
+   	   		ws.send(megabyte);
+   	   		up += megabyte.size;
+   	   	});
+   	   });
+   	   let upsi = setInterval(() => {
+   	   	  upel.innerHTML = bytes(up, { bits: true });
+   	   	  up = 0;
+   	   }, interval || 1000);
+	   ws.onclose = () => {
+	   	  if (int) clearInterval(int);
+	   	  clearInterval(upsi);
+	   	  status.innerHTML = "Testing Completed.";
+	   	  document.getElementById("retry").style.display = "block";
+	   	  if (megabyte) delete megabyte;
+	   }
+	   ws.onerror = () => {
+	   	  if (int) clearInterval(int);
+	   	  status.innerHTML = "An error occured. Try again later.";
+	   	  document.getElementById("retry").style.display = "block";
+	   	  if (megabyte) delete megabyte;
+	   }
+   }
+   download();
+   document.getElementById("retry").onclick = download;
+  </script>
+  <style>
+    #statel {
+    	position: absolute;
+    	bottom: 0;
+    	left: 0;
+    }
+
+    #retry {
+    	position: absolute;
+    	bottom: 0;
+    	right: 0;
+    }
+  </style>
+ </body>
+</html>
