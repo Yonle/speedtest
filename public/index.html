@@ -69,8 +69,10 @@
 	    status.innerHTML = "Uploading....";
    	   	int = setInterval(async () => {
    	   		ws.send(megabyte);
-   	   		up += megabyte.size;
    	   	});
+   	   });
+   	   ws.addEventListener('message', ({ data }) => {
+   	   	 up += Number(data);
    	   });
    	   let upsi = setInterval(() => {
    	   	  upel.innerHTML = bytes(up, { bits: true });

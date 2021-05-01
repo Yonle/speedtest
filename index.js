@@ -22,27 +22,24 @@ app.use((req, res) => res.redirect("/"));
 const wss = new WebSocket.Server({ server });
 
 wss.on('connection', (ws, req) => {
-//	let duplex = WebSocket.createWebSocketStream(ws);
-//	let stream = createReadStream("/dev/zero").pipe(duplex);
+	ws.on('message', m => ws.send(m.length));
 	if (req.url == "/__upload") {
 		return setTimeout(() => {
+			if (ws.readyState == 2) return;
 			ws.close();
 		}, 8000);
 	}
+	let duplex = WebSocket.createWebSocketStream(ws);
+	let stream = createReadStream("/dev/zero").pipe(duplex);
 	let mb = 0;
-	let int = setInterval(() => {
-		if (mb === 300) ws.close();
-		ws.send(megabyte);
-		mb++;
-	});
 	setTimeout(() => {
 		if (ws.readyState == 2) return;
-		clearInterval(int);
+		stream.destroy();
 		ws.close();
 	}, 8000);
 	
 	ws.on('close', () => {
-		clearInterval(int);
+		stream.destroy();
 	});
-	ws.on('error', console.error);
+	duplex.on('error', () => stream.destroy());
 });
