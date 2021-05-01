@@ -20,7 +20,7 @@
    let interval = 1000;
    let dl = 0;
    let up = 0;
-   let megabyte = null;
+   let cache = null;
    const dlel = document.getElementById("download");
    const upel = document.getElementById("upload");
    const ping = document.getElementById("ping");
@@ -38,7 +38,7 @@
 	   	   status.innerHTML = "Server Responded";
 	   	   ping.innerHTML = Math.floor(Date.now() - startDate) + " ms";
 	   	ws.addEventListener('message', ({ data }) => {
-	   		   if (!megabyte) megabyte = data;
+	   		   if (!cache) cache = data;
 	 	 	   dl += data.length || data.byteLength || data.size;
 	   	       status.innerHTML = "Receiving Data....";
 	    });
@@ -56,11 +56,11 @@
 	      if (int) clearInterval(int);
 	      status.innerHTML = "An error occured. Try again later.";
 	      document.getElementById("retry").style.display = "block";
-	      if (megabyte) delete megabyte;
+	      if (cache) delete cache;
 	   }
    }
    function init () {
-   	   if (!megabyte) {
+   	   if (!cache) {
    	   	  return download();
    	   }
    	   let ws = new WebSocket(location.origin.replace(/^http/, "ws") + "/__upload");
@@ -68,7 +68,7 @@
 	   ws.addEventListener('open', () => {
 	    status.innerHTML = "Uploading....";
    	   	int = setInterval(async () => {
-   	   		ws.send(megabyte);
+   	   		ws.send(cache);
    	   	});
    	   });
    	   ws.addEventListener('message', ({ data }) => {
@@ -83,13 +83,13 @@
 	   	  clearInterval(upsi);
 	   	  status.innerHTML = "Testing Completed.";
 	   	  document.getElementById("retry").style.display = "block";
-	   	  if (megabyte) delete megabyte;
+	   	  if (cache) delete cache;
 	   }
 	   ws.onerror = () => {
 	   	  if (int) clearInterval(int);
 	   	  status.innerHTML = "An error occured. Try again later.";
 	   	  document.getElementById("retry").style.display = "block";
-	   	  if (megabyte) delete megabyte;
+	   	  if (cache) delete cache;
 	   }
    }
    window.onload = init;
