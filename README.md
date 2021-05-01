@@ -16,7 +16,8 @@ npm start
 ```
 
 ## Demo
-https://speedtest-yonle.glitch.me
+- https://speedtest-yonle.glitch.me
+- https://speedtest.yonle.repl.co
 
 ## Community
 - [Discord](https://quickstream.yonle.repl.co/discord)
