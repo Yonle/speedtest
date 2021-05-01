@@ -8,8 +8,6 @@ const express = require("express");
 console.log("[Module] Loaded express module");
 const app = express();
 console.log("[Express] Created app");
-const megabyte = require("crypto").randomBytes(1024 * 1024); // This is 1 MB block of random data
-console.log("[Crypto] Generated random 1MB data");
 const server = createServer(app);
 console.log("[Server] Server created");
 
