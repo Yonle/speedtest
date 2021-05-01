@@ -33,7 +33,9 @@
       if (typeof bytes != "function") {
         location.reload();
       }
-      let interval = 1000;
+      let interval = 200;
+      let bits = false;
+      let defineWith = 5;
       let dl = 0;
       let up = 0;
       let cache = null;
@@ -59,7 +61,7 @@
             status.innerHTML = "Receiving Data....";
           });
           int = setInterval(() => {
-            dlel.innerHTML = bytes(dl * 8, { bits: true });
+            dlel.innerHTML = bytes(dl * defineWith, { bits: bits }) + "/s";
             dl = 0;
           }, interval || 1000);
         });
@@ -93,7 +95,7 @@
           up += Number(data);
         });
         let upsi = setInterval(() => {
-          upel.innerHTML = bytes(up * 8, { bits: true });
+          upel.innerHTML = bytes(up * defineWith, { bits: bits }) + "/s";
           up = 0;
         }, interval || 1000);
         ws.onclose = () => {
