@@ -59,7 +59,7 @@
             status.innerHTML = "Receiving Data....";
           });
           int = setInterval(() => {
-            dlel.innerHTML = bytes(dl, { bits: true });
+            dlel.innerHTML = bytes(dl * 8, { bits: true });
             dl = 0;
           }, interval || 1000);
         });
@@ -93,7 +93,7 @@
           up += Number(data);
         });
         let upsi = setInterval(() => {
-          upel.innerHTML = bytes(up, { bits: true });
+          upel.innerHTML = bytes(up * 8, { bits: true });
           up = 0;
         }, interval || 1000);
         ws.onclose = () => {
