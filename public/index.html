@@ -55,9 +55,12 @@
         ws.addEventListener("open", () => {
           status.innerHTML = "Server Responded";
           ping.innerHTML = Math.floor(Date.now() - startDate) + " ms";
+          startDate = Date.now();
           ws.addEventListener("message", ({ data }) => {
             if (!cache) cache = data;
             dl += data.length || data.byteLength || data.size;
+            ping.innerHTML = Math.floor(Date.now() - startDate) + " ms";
+            startDate = Date.now();
             status.innerHTML = "Receiving Data....";
           });
           int = setInterval(() => {
@@ -85,13 +88,18 @@
           location.origin.replace(/^http/, "ws") + "/__upload"
         );
         let int = null;
+        startDate = Date.now();
         ws.addEventListener("open", () => {
           status.innerHTML = "Uploading....";
+          ping.innerHTML = Math.floor(Date.now() - startDate) + " ms";
+          startDate = Date.now();
           int = setInterval(async () => {
             ws.send(cache);
           });
         });
         ws.addEventListener("message", ({ data }) => {
+          ping.innerHTML = Math.floor(Date.now() - startDate) + " ms";
+          startDate = Date.now();
           up += Number(data);
         });
         let upsi = setInterval(() => {
