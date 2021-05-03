@@ -1,4 +1,3 @@
-const { createReadStream } = require("fs");
 const { createServer } = require("http");
 const WebSocket = require("ws");
 const express = require("express");
