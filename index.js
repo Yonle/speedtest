@@ -3,7 +3,7 @@ const { createServer } = require("http");
 const WebSocket = require("ws");
 const express = require("express");
 const app = express();
-const randomData = require("crypto").randomBytes(500000);
+const randomData = require("crypto").randomBytes(64000);
 const server = createServer(app);
 
 const listener = server.listen(process.env.PORT, () => {
