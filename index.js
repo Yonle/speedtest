@@ -22,12 +22,17 @@ wss.on("connection", (ws, req) => {
       ws.close();
     }, 8000);
   }
-  let int = setInterval(() => ws.send(randomData));
+  let send = () => {
+    if (ws.readyState == 2) return;
+  	ws.send(randomData, (err) => {
+  		if (err) return ws.close();
+  		send();
+  	});
+  }
+  send();
   setTimeout(() => {
     if (ws.readyState == 2) return;
-    clearInterval(int);
     ws.close();
   }, 8000);
-  ws.on('close', () => clearInterval(int));
   ws.on('error', () => ws.close());
 });
