@@ -28,10 +28,10 @@ wss.on("connection", (ws, req) => {
   		send();
   	});
   }
-  send();
   setTimeout(() => {
     if (ws.readyState == 2) return;
     ws.close();
   }, 8000);
   ws.on('error', () => ws.close());
+  send();
 });
