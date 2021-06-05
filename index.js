@@ -10,7 +10,6 @@ const listener = server.listen(process.env.PORT, () => {
 });
 
 app.use(express.static("public"));
-app.use((req, res) => res.redirect("/"));
 const wss = new WebSocket.Server({ server });
 
 wss.on("connection", (ws, req) => {
