@@ -2,14 +2,14 @@ const { createServer } = require("http");
 const WebSocket = require("ws");
 const express = require("express");
 const app = express();
-const randomData = require("crypto").randomBytes(64000);
+const { createReadStream } = require("fs");
 const server = createServer(app);
 
 const listener = server.listen(process.env.PORT, () => {
   console.log("Now listening on port:", listener.address().port);
 });
 
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
 const wss = new WebSocket.Server({ server });
 
 wss.on("connection", (ws, req) => {
@@ -20,17 +20,12 @@ wss.on("connection", (ws, req) => {
       ws.close();
     }, 8000);
   }
-  let send = () => {
-    if (ws.readyState == 2) return;
-  	ws.send(randomData, (err) => {
-  		if (err) return ws.close();
-  		send();
-  	});
-  }
+
+  let stream = createReadStream("/dev/urandom").pipe(WebSocket.createWebSocketStream(ws));
   setTimeout(() => {
     if (ws.readyState == 2) return;
+    stream.destroy();
     ws.close();
   }, 8000);
   ws.on('error', () => ws.close());
-  send();
 });
